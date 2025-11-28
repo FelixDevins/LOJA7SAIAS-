@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dona 7 Saias - Ateliê de Axé</title>
+    <!-- Carrega o Tailwind CSS para estilização rápida e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carrega a biblioteca Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Configuração do Tailwind para fontes e cores -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Georgia', 'serif'], // Usando uma fonte serif padrão para o estilo sofisticado
+                    },
+                    colors: {
+                        'stone': {
+                            950: '#0a0a0a',
+                            900: '#1c1917',
+                            800: '#292524',
+                            400: '#a8a29e',
+                        },
+                        'red': {
+                            800: '#991b1b',
+                            700: '#b91c1c',
+                            500: '#ef4444',
+                        },
+                        'yellow': {
+                            500: '#eab308',
+                            600: '#d97706',
+                        }
+                    },
+                    animation: {
+                        shimmer: 'shimmer 1.5s infinite',
+                        gradient: 'gradient 5s ease infinite',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
+                        },
+                        gradient: {
+                            '0%, 100%': { 'background-position': '0% 50%' },
+                            '50%': { 'background-position': '100% 50%' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos globais personalizados */
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: #0a0a0a;
+            color: #f5f5f4;
+            overflow-x: hidden;
+        }
+
+        /* Classes para animação de fade-in e slide-in simples */
+        .animate-in {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-500 { transition-delay: 0.5s; }
+
+        /* JavaScript para aplicar as animações no scroll */
+        .show-on-scroll {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Estilo para ícones Lucide (apenas para fallback, se necessário) */
+        .lucide {
+            display: inline-block;
+        }
+
+        /* Estilo para o menu mobile - usa a animação de slide simples */
+        #mobile-menu-container.open {
+            display: flex;
+            animation: slide-down 0.3s ease-out forwards;
+        }
+        @keyframes slide-down {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #mobile-menu-container {
+            display: none;
+        }
+
+        /* Botão WhatsApp flutuante com animação de pulso suave */
+        @keyframes pulse-whatsapp {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(34, 197, 94, 0); }
+        }
+        .whatsapp-float-btn {
+            animation: pulse-whatsapp 2s infinite, bounce 2s infinite;
+        }
+    </style>
+</head>
+<body class="font-sans text-stone-100 bg-stone-950 min-h-screen flex flex-col">
+
+    <!-- Dados Mock (para uso no script) -->
+    <script>
+        const produtos = [
+            {
+                id: 1,
+                nome: "Taça Pombagira",
+                preco: "R$ 189,90",
+                categoria: "Pomba Gira",
+                img: "tofoproduto1.jpg",
+                descricao: "🌹 Taça Guardiã: Luxo e Mistério em Cada Gole .🌹"
+            },
+            {
+                id: 2,
+                nome: "Brajá de Exu Guardião",
+                preco: "R$ 145,00",
+                categoria: "Exu",
+                /* Direct image URL required — replaced postimg page URL with placeholder until a real image is provided */
+                img: "exu.jpg",
+                descricao: "Brajá trançado com miçangas pretas e vermelhas foscas. Acabamento com tridente."
+            },
+            {
+                id: 3,
+                nome: "Braja De Preto Velho",
+                preco: "R$ 89,90",
+                categoria: "Orixás",
+                img: "fotoproduto5.jpg",
+                descricao: "Guia de cristal amarelo ouro nº 8 com pingente de espelho. Irradia prosperidade."
+            },
+            {
+                id: 4,
+                nome: "Taça PombaGira",
+                preco: "R$ 45,00",
+                categoria: "Proteção",
+                img: "fotoproduto3.jpg",
+                descricao: "Guia simples com as cores das 7 linhas da Umbanda para proteção diária."
+            },
+            {
+                id: 5,
+                nome: "Chicote de Iansã",
+                preco: "R$ 120,00",
+                categoria: "Orixás",
+                img: "fotoproduto4.jpg",
+                descricao: "Chicote volumoso com miçangas de coral e firma rajada. Axé de movimento."
+            },
+            {
+                id: 6,
+                nome: "Guia de Caboclo (Ervas)",
+                preco: "R$ 55,90",
+                categoria: "Caboclos",
+                img: "fotoproduto7.jpg",
+                descricao: "Guia de porcelana verde bandeira com sementes naturais e dente de proteção."
+            }
+        ];
+
+        const depoimentos = [
+            { id: 1, nome: "Juliana Martins", texto: "A guia da Dona 7 Saias é a coisa mais linda que já vi. Senti a energia assim que toquei nela.", estrelas: 5 },
+            { id: 2, nome: "Carlos Ogun", texto: "Encomendei um Brajá personalizado e ficou perfeito. O trançado é muito firme.", estrelas: 5 },
+            { id: 3, nome: "Ana de Oyá", texto: "Material de primeira qualidade. Os cristais brilham muito! Recomendo a todos.", estrelas: 5 }
+        ];
+
+        const whatsappLink = "https://wa.me/5511999998888?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20or%C3%A7amento%20de%20guias.";
+        const categorias = ['Todos', 'Pomba Gira', 'Exu', 'Orixás', 'Caboclos', 'Proteção'];
+    </script>
+
+    <!-- Botão Flutuante do WhatsApp -->
+    <a
+        href="https://wa.me/5511999998888?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20or%C3%A7amento%20de%20guias."
+        target="_blank"
+        rel="noopener noreferrer"
+        class="whatsapp-float-btn fixed bottom-6 right-6 z-50 bg-green-600 hover:bg-green-500 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 flex items-center justify-center duration-300 group"
+        aria-label="Falar no WhatsApp"
+    >
+        <i data-lucide="message-circle" class="w-8 h-8 fill-current"></i>
+        <span class="absolute right-full mr-3 bg-white text-black text-xs font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden md:block">
+            Fale Conosco
+        </span>
+    </a>
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed w-full z-40 transition-all duration-500 bg-transparent py-5">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            
+
+            <div class="flex items-center gap-3 group cursor-pointer">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-red-800 to-black flex items-center justify-center border border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)] group-hover:shadow-[0_0_25px_rgba(220,38,38,0.6)] transition-all">
+                    <span class="font-serif text-xl font-bold text-yellow-500"><img src="ft.png" alt=""></span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-serif font-bold tracking-widest text-stone-100 uppercase">
+                        Dona 7 Saias
+                    </h1>
+                    <p class="text-[10px] text-yellow-500 tracking-[0.2em] uppercase">Ateliê de Axé</p>
+                </div>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide text-stone-300">
+                <a href="#inicio" class="hover:text-yellow-500 transition-colors relative group">Início<span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-600 transition-all group-hover:w-full"></span></a>
+                <a href="#guias" class="hover:text-yellow-500 transition-colors relative group">Guias<span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-600 transition-all group-hover:w-full"></span></a>
+                <a href="#atelie" class="hover:text-yellow-500 transition-colors relative group">Ateliê<span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-600 transition-all group-hover:w-full"></span></a>
+                <a href="#contato" class="hover:text-yellow-500 transition-colors relative group">Contato<span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-600 transition-all group-hover:w-full"></span></a>
+                <button class="bg-gradient-to-r from-red-800 to-red-900 hover:from-red-700 hover:to-red-800 text-white px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-lg hover:shadow-red-900/40 border border-red-700/50">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> <span class="text-xs uppercase font-bold">Loja</span>
+                </button>
+            </div>
+
+            <button id="menu-toggle" class="md:hidden text-yellow-500 hover:text-white transition-colors">
+                <i data-lucide="menu" class="w-7 h-7" id="menu-icon"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu (Escondido por padrão) -->
+        <div id="mobile-menu-container" class="md:hidden bg-stone-950/95 backdrop-blur-xl absolute w-full border-b border-red-900/30 p-6 flex-col gap-6 z-40">
+            <a href="#inicio" class="menu-item text-xl font-serif text-stone-300 hover:text-yellow-500 flex justify-between items-center border-b border-white/5 pb-2">Início <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="#guias" class="menu-item text-xl font-serif text-stone-300 hover:text-yellow-500 flex justify-between items-center border-b border-white/5 pb-2">Guias <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="#atelie" class="menu-item text-xl font-serif text-stone-300 hover:text-yellow-500 flex justify-between items-center border-b border-white/5 pb-2">Ateliê <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="#contato" class="menu-item text-xl font-serif text-stone-300 hover:text-yellow-500 flex justify-between items-center border-b border-white/5 pb-2">Contato <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+        </div>
+    </nav>
+
+    <!-- Hero Section (Capa) -->
+    <header id="inicio" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 z-0">
+            <img
+                src="unnamed (2).jpg"
+                alt="Fundo"
+                class="w-full h-full object-cover opacity-40 scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,10,10,0.8)_100%)]"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto mt-20">
+            <div class="inline-flex items-center gap-2 px-4 py-2 border border-yellow-600/30 rounded-full bg-black/40 backdrop-blur-md mb-8 animate-in delay-200">
+                <i data-lucide="star" class="w-3 h-3 text-yellow-500 fill-yellow-500"></i>
+                <span class="text-yellow-500 text-xs font-bold uppercase tracking-[0.2em]">Conexão Sagrada</span>
+                <i data-lucide="star" class="w-3 h-3 text-yellow-500 fill-yellow-500"></i>
+            </div>
+
+            <h2 class="text-5xl md:text-8xl font-serif font-bold text-white mb-8 leading-[1.1] drop-shadow-2xl animate-in delay-300">
+                A Magia em cada <br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-500 to-red-500 bg-[length:200%_auto] animate-gradient">
+                    Conta e Cristal
+                </span>
+            </h2>
+
+            <p class="text-lg md:text-xl text-stone-300 mb-10 max-w-2xl mx-auto leading-relaxed font-light animate-in delay-500">
+                Confecção de guias, brajás e taças personalizados. Feitos com fundamentos rigorosos, materiais nobres e muito axé para sua proteção.
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 justify-center animate-in delay-500">
+                <a href="#guias" class="group relative px-8 py-4 bg-red-700 overflow-hidden rounded-full shadow-lg hover:shadow-red-600/40 transition-all hover:-translate-y-1">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+                    <span class="relative text-white font-bold tracking-wider flex items-center gap-2">
+                        Ver Coleção <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </span>
+                </a>
+                <a href="javascript:void(0)" onclick="window.open(whatsappLink, '_blank');" class="px-8 py-4 bg-transparent border border-stone-600 text-stone-300 rounded-full font-medium hover:border-yellow-500 hover:text-yellow-500 transition-all hover:-translate-y-1 backdrop-blur-sm">
+                    Pedir Personalizada
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Destaques (Features) -->
+    <section class="relative z-20 -mt-20 px-4">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="features-container">
+                <!-- Features serão renderizadas aqui pelo JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Catálogo -->
+    <section id="guias" class="py-24 container mx-auto px-6">
+        <div class="flex flex-col items-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4 text-center">
+                Nossas <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-500">Criações</span>
+            </h2>
+            <div class="w-20 h-1 bg-red-600 rounded-full mb-8"></div>
+
+            <div class="flex flex-wrap justify-center gap-3" id="categories-container">
+                <!-- Botões de Categoria serão renderizados aqui pelo JS -->
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="products-container">
+            <!-- Produtos serão renderizados aqui pelo JS -->
+        </div>
+    </section>
+
+    <!-- Seção Sobre (Redesenhada) -->
+    <section id="atelie" class="py-24 bg-gradient-to-b from-stone-900 to-stone-950 relative overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center gap-16">
+            <div class="w-full md:w-1/2 relative">
+                 <div class="absolute -inset-4 bg-gradient-to-r from-red-600 to-yellow-600 opacity-20 blur-2xl rounded-full animate-pulse"></div>
+                                 <img
+                                     src="ft.png"
+                   alt="Artesanato"
+                   class="relative rounded-2xl shadow-2xl border border-stone-700/50 w-full object-cover h-[600px] grayscale-[20%] hover:grayscale-0 transition-all duration-700"
+                 />
+                 <!-- Card Flutuante -->
+                 <div class="absolute bottom-10 -left-6 md:-left-10 bg-stone-800/90 backdrop-blur-xl p-6 rounded-2xl border border-stone-700 shadow-2xl max-w-xs">
+                    <div class="flex items-center gap-4 mb-3">
+                      <div class="p-2 bg-yellow-600/20 rounded-lg text-yellow-500">
+                        <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                      </div>
+                      <div>
+                        <p class="text-white font-bold">Qualidade Premium</p>
+                        <p class="text-xs text-stone-400">Materiais Importados</p>
+                      </div>
+                    </div>
+                    <p class="text-stone-300 text-xs leading-relaxed">
+                      Trabalhamos apenas com cristais de vidro, porcelana tcheca e miçangas jablonex. Durabilidade e brilho para sua guia.
+                    </p>
+                 </div>
+            </div>
+
+            <div class="w-full md:w-1/2">
+                <h4 class="text-red-500 uppercase tracking-[0.3em] text-xs font-bold mb-4">Nosso Ofício Sagrado</h4>
+                <h2 class="text-5xl font-serif font-bold text-white mb-8 leading-tight">
+                    Onde a Fé encontra <br/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">a Arte</span>
+                </h2>
+
+                <div class="space-y-6 text-stone-300 text-lg font-light leading-relaxed">
+                    <p>
+                        Na <strong class="text-white font-serif">Dona 7 Saias</strong>, entendemos que uma guia não é um acessório. É um fundamento. É proteção. É a materialização da energia do seu Orixá ou Guia.
+                    </p>
+                    <p>
+                        Por isso, cada peça é montada em um ambiente limpo energeticamente, com rezas e respeito. Você personaliza tudo: desde o tipo de fio até a firma de fechamento.
+                    </p>
+                </div>
+
+                <div class="mt-10 grid grid-cols-2 gap-6">
+                    <div class="border-l-2 border-red-800 pl-4">
+                        <h5 class="text-white font-bold text-lg mb-1">Personalização</h5>
+                        <p class="text-stone-500 text-sm">Do jeito que sua entidade pediu.</p>
+                    </div>
+                    <div class="border-l-2 border-yellow-600 pl-4">
+                        <h5 class="text-white font-bold text-lg mb-1">Restauração</h5>
+                        <p class="text-stone-500 text-sm">Reformamos fios antigos com carinho.</p>
+                    </div>
+                </div>
+
+                <div class="mt-10">
+                    <a href="javascript:void(0)" onclick="window.open(whatsappLink, '_blank');" class="inline-flex items-center gap-2 text-yellow-500 hover:text-white border-b border-yellow-500 pb-1 transition-colors">
+                        Fale diretamente com a artesã <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Depoimentos -->
+    <section class="py-24 container mx-auto px-6 border-t border-stone-900">
+         <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl font-serif font-bold text-white mb-6">A voz de quem usa</h2>
+            <p class="text-stone-400">A confiança de nossos clientes é nosso maior axé.</p>
+         </div>
+
+         <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="testimonials-container">
+            <!-- Depoimentos serão renderizados aqui pelo JS -->
+         </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer id="contato" class="bg-black pt-20 pb-10 border-t border-stone-900">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                         <div class="w-8 h-8 rounded-full bg-red-800 flex items-center justify-center">
+                            <span class="font-serif font-bold text-black text-xs">7S</span>
+                         </div>
+                         <h2 class="text-xl font-serif font-bold text-white">Dona 7 Saias</h2>
+                    </div>
+                    <p class="text-stone-500 text-sm mb-6 leading-relaxed">
+                        Arte, fé e tradição entrelaçadas em cada fio.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-stone-900 flex items-center justify-center text-stone-400 hover:bg-white hover:text-black transition-all">
+                            <i data-lucide="instagram" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-stone-900 flex items-center justify-center text-stone-400 hover:bg-white hover:text-black transition-all">
+                            <i data-lucide="facebook" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold mb-6 text-sm">Institucional</h3>
+                    <ul class="space-y-3 text-stone-500 text-sm">
+                        <li><a href="#" class="hover:text-red-500 transition-colors">Sobre Nós</a></li>
+                        <li><a href="#" class="hover:text-red-500 transition-colors">Política de Envio</a></li>
+                        <li><a href="#" class="hover:text-red-500 transition-colors">Trocas e Devoluções</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold mb-6 text-sm">Produtos</h3>
+                    <ul class="space-y-3 text-stone-500 text-sm">
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Guias de Proteção</a></li>
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Brajás</a></li>
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Taças</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold mb-6 text-sm">Fale Conosco</h3>
+                    <ul class="space-y-4 text-stone-500 text-sm">
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-red-600 shrink-0"></i>
+                            <span>São Paulo, SP<br/>Enviamos para todo o mundo</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="phone" class="w-4 h-4 text-red-600 shrink-0"></i>
+                            <span>(11) 99999-8888</span>
+                        </li>
+                        <li class="mt-6">
+                            <a
+                                href="javascript:void(0)"
+                                onclick="window.open(whatsappLink, '_blank');"
+                                class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold transition-all shadow-lg flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="message-circle" class="w-5 h-5"></i> Orçamento via WhatsApp
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="border-t border-stone-900/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-stone-600 text-xs">
+                <p>&copy; 2024 Ateliê Dona 7 Saias. Todos os direitos reservados.</p>
+                <p>Desenvolvido com Axé.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script para Manipulação do DOM e Interatividade -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializa ícones Lucide
+            lucide.createIcons();
+
+            const navbar = document.getElementById('navbar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu-container');
+            const menuIcon = document.getElementById('menu-icon');
+
+            // 1. Navbar Scroll Effect
+            const handleScroll = () => {
+                const scrolled = window.scrollY > 50;
+                if (scrolled) {
+                    navbar.classList.add('bg-stone-950/90', 'backdrop-blur-md', 'shadow-lg', 'border-b', 'border-red-900/30', 'py-3');
+                    navbar.classList.remove('bg-transparent', 'py-5');
+                } else {
+                    navbar.classList.remove('bg-stone-950/90', 'backdrop-blur-md', 'shadow-lg', 'border-b', 'border-red-900/30', 'py-3');
+                    navbar.classList.add('bg-transparent', 'py-5');
+                }
+            };
+            window.addEventListener('scroll', handleScroll);
+            handleScroll(); // Executa ao carregar
+
+            // 2. Mobile Menu Toggle
+            menuToggle.addEventListener('click', () => {
+                const isOpen = mobileMenu.classList.toggle('open');
+                if (isOpen) {
+                    menuIcon.innerHTML = lucide.createIcons()['x'].toSvg();
+                } else {
+                    menuIcon.innerHTML = lucide.createIcons()['menu'].toSvg();
+                }
+            });
+
+            // Fecha o menu mobile ao clicar em um item
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    mobileMenu.classList.remove('open');
+                    menuIcon.innerHTML = lucide.createIcons()['menu'].toSvg();
+                });
+            });
+
+
+            // 3. Renderização Dinâmica de Conteúdo (Features, Produtos, Depoimentos)
+
+            let activeCategory = 'Todos';
+
+            // --- Renderiza Features ---
+            const featuresData = [
+                { icon: 'sparkles', title: "Cristais Legítimos", desc: "Materiais nobres e selecionados." },
+                { icon: 'flame', title: "Fundamento & Fé", desc: "Respeito às cores e ordens." },
+                { icon: 'heart', title: "Feito à Mão", desc: "Energia dedicada em cada nó." }
+            ];
+
+            const featuresContainer = document.getElementById('features-container');
+            featuresData.forEach((feature, idx) => {
+                const html = `
+                    <div class="bg-stone-900/80 backdrop-blur-md p-8 rounded-2xl border border-stone-800 hover:border-red-900/50 transition-all hover:transform hover:-translate-y-1 hover:shadow-2xl text-center group animate-in delay-${200 + idx * 100}">
+                        <div class="w-16 h-16 mx-auto bg-stone-950 rounded-full flex items-center justify-center mb-4 border border-stone-800 group-hover:border-yellow-600/50 transition-colors">
+                            <i data-lucide="${feature.icon}" class="text-yellow-600 group-hover:text-yellow-500 transition-colors w-7 h-7"></i>
+                        </div>
+                        <h3 class="font-serif text-xl text-white mb-2">${feature.title}</h3>
+                        <p class="text-stone-400 text-sm">${feature.desc}</p>
+                    </div>
+                `;
+                featuresContainer.insertAdjacentHTML('beforeend', html);
+            });
+
+
+            // --- Renderiza Depoimentos ---
+            const testimonialsContainer = document.getElementById('testimonials-container');
+            depoimentos.forEach(depo => {
+                const stars = Array(depo.estrelas).fill(0).map((_, i) => `<i data-lucide="star" class="w-4 h-4 fill-current"></i>`).join('');
+                const html = `
+                    <div class="bg-stone-900/50 p-8 rounded-2xl border border-stone-800 relative hover:bg-stone-900 transition-colors animate-in">
+                        <div class="flex text-yellow-500 gap-1 mb-6">${stars}</div>
+                        <p class="text-stone-300 italic mb-6 leading-relaxed">"${depo.texto}"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center text-white font-serif font-bold">
+                                ${depo.nome.charAt(0)}
+                            </div>
+                            <p class="text-white font-medium text-sm">${depo.nome}</p>
+                        </div>
+                    </div>
+                `;
+                testimonialsContainer.insertAdjacentHTML('beforeend', html);
+            });
+
+
+            // --- Renderiza Produtos e Categorias ---
+            const productsContainer = document.getElementById('products-container');
+            const categoriesContainer = document.getElementById('categories-container');
+
+            const renderProducts = () => {
+                productsContainer.innerHTML = ''; // Limpa antes de renderizar
+
+                const filteredProducts = produtos.filter(p => activeCategory === 'Todos' || p.categoria === activeCategory);
+
+                filteredProducts.forEach(produto => {
+                    const html = `
+                        <div class="group relative bg-stone-900 rounded-3xl overflow-hidden border border-stone-800 hover:border-stone-700 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col h-full animate-in">
+                            <div class="relative h-80 overflow-hidden">
+                                <div class="absolute inset-0 bg-black/20 z-10 group-hover:bg-black/0 transition-colors duration-500"></div>
+                                <img
+                                    src="${produto.img}"
+                                    data-src="${produto.img}"
+                                    alt="${produto.nome}"
+                                    loading="lazy"
+                                    decoding="async"
+                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
+                                    onerror="(function(){console.warn('Produto imagem falhou ao carregar:', this.dataset.src);this.onerror=null;this.src='https://placehold.co/800x600/1c1917/a8a29e?text=Produto+Ax%C3%A9';})()"
+                                />
+                                <span class="absolute top-4 left-4 z-20 bg-stone-950/80 backdrop-blur text-yellow-500 text-xs font-bold px-3 py-1.5 rounded-full border border-yellow-500/20 uppercase tracking-wide">
+                                    ${produto.categoria}
+                                </span>
+                            </div>
+                            <div class="p-8 flex flex-col flex-grow">
+                                <div class="flex-grow">
+                                    <h3 class="text-2xl font-serif font-bold text-white mb-3 group-hover:text-red-400 transition-colors">
+                                        ${produto.nome}
+                                    </h3>
+                                    <p class="text-stone-400 text-sm leading-relaxed mb-6">
+                                        ${produto.descricao}
+                                    </p>
+                                </div>
+                                <div class="pt-6 border-t border-stone-800 flex items-center justify-between mt-auto">
+                                    <div>
+                                        <span class="block text-xs text-stone-500 uppercase">Valor</span>
+                                        <span class="text-2xl font-bold text-white">${produto.preco}</span>
+                                    </div>
+                                    <a href="javascript:void(0)" onclick="window.open(whatsappLink, '_blank');" class="bg-white hover:bg-stone-200 text-black p-3 rounded-full transition-transform hover:scale-110 shadow-lg">
+                                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    productsContainer.insertAdjacentHTML('beforeend', html);
+                });
+                lucide.createIcons(); // Recria os ícones após a injeção do HTML
+                // Adiciona diagnósticos para imagens — marca visualmente e loga no console
+                document.querySelectorAll('#products-container img').forEach(imgEl => {
+                    imgEl.addEventListener('error', () => {
+                        console.warn('Produto imagem falhou ao carregar:', imgEl.dataset.src, 'alt:', imgEl.alt);
+                        imgEl.style.outline = '3px solid rgba(220,38,38,0.9)';
+                    });
+                    imgEl.addEventListener('load', () => {
+                        // remove outline se carregou OK
+                        imgEl.style.outline = 'none';
+                    });
+                });
+            };
+
+            const updateCategoryButtons = () => {
+                categoriesContainer.innerHTML = '';
+                categorias.forEach(cat => {
+                    const isActive = cat === activeCategory;
+                    const button = document.createElement('button');
+                    button.textContent = cat;
+                    button.className = `px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${isActive ? 'bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'bg-transparent border-stone-800 text-stone-400 hover:border-stone-600 hover:text-white'}`;
+                    button.addEventListener('click', () => {
+                        activeCategory = cat;
+                        updateCategoryButtons();
+                        renderProducts();
+                    });
+                    categoriesContainer.appendChild(button);
+                });
+            };
+
+            // Inicialização da galeria
+            updateCategoryButtons();
+            renderProducts();
+
+
+            // 4. Observador de Interseção para Animações (Scroll Reveal)
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show-on-scroll');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1 // Começa a mostrar quando 10% do elemento está visível
+            });
+
+            document.querySelectorAll('.animate-in').forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>
